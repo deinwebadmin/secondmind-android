@@ -22,7 +22,7 @@ secondmind-android/
 
 ## APK installieren (Sideload)
 
-1. [`secondmind-1.0.0.apk`](https://github.com/deinwebadmin/secondmind-android/releases/download/v1.0.0/secondmind-1.0.0.apk)
+1. [`secondmind-1.0.1.apk`](https://github.com/deinwebadmin/secondmind-android/releases/download/v1.0.1/secondmind-1.0.1.apk)
    aus dem Release herunterladen (oder selbst bauen, siehe unten).
 2. Auf dem Gerät: **Einstellungen → Apps → Installieren unbekannter Apps** → Browser/File-Manager erlauben.
 3. APK antippen und installieren.
@@ -110,3 +110,14 @@ MIT
 ## Siehe auch
 
 - [secondmind-windows](https://github.com/deinwebadmin/secondmind-windows) – dieselbe App für Windows (gleiche Google-Client-ID, gleicher Drive-Ordner)
+
+## Änderungen
+
+### 1.0.1
+- „＋ Unterpunkt“ ist jetzt in **allen Vorlagen** (Woche, Standard, Simpel) direkt am Hauptpunkt sichtbar
+- Notiz ↔ To-Do-Verknüpfungen zeigen **beidseitig** aufeinander: Chip am Punkt, Liste in der Notiz, Lösen per ×
+- Konto-Wechsel abgesichert: bei einem anderen Google-Konto werden alte Drive-IDs verworfen und fehlende Dateien automatisch neu angelegt
+- Export/Import enthält jetzt auch die Einstellungen (praktisch für ein zweites Gerät)
+
+### 1.0.0
+- Erstveröffentlichung
