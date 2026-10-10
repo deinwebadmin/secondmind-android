@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">secondmind</string>
+    <string name="title_activity_main">secondmind</string>
+    <string name="package_name">de.webadmin.secondmind</string>
+    <string name="custom_url_scheme">de.webadmin.secondmind</string>
+</resources>

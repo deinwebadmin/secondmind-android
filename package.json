@@ -1,0 +1,20 @@
+{
+  "name": "secondmind-android",
+  "version": "1.0.0",
+  "description": "secondmind – Notizen und To-Dos mit Google-Drive-Synchronisation (Android)",
+  "private": true,
+  "license": "MIT",
+  "author": "deinwebadmin",
+  "scripts": {
+    "sync": "cap sync android",
+    "build": "cd android && gradlew assembleRelease",
+    "apk": "cd android && gradlew assembleDebug"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.0.0",
+    "@capacitor/core": "^7.0.0"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.0.0"
+  }
+}
