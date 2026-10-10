@@ -22,7 +22,8 @@ secondmind-android/
 
 ## APK installieren (Sideload)
 
-1. `app-release.apk` herunterladen (Release oder eigener Build, siehe unten).
+1. [`secondmind-1.0.0.apk`](https://github.com/deinwebadmin/secondmind-android/releases/download/v1.0.0/secondmind-1.0.0.apk)
+   aus dem Release herunterladen (oder selbst bauen, siehe unten).
 2. Auf dem Gerät: **Einstellungen → Apps → Installieren unbekannter Apps** → Browser/File-Manager erlauben.
 3. APK antippen und installieren.
 4. App starten → Google Drive verknüpfen (siehe unten).
@@ -105,3 +106,7 @@ Export/Import.
 ## Lizenz
 
 MIT
+
+## Siehe auch
+
+- [secondmind-windows](https://github.com/deinwebadmin/secondmind-windows) – dieselbe App für Windows (gleiche Google-Client-ID, gleicher Drive-Ordner)
