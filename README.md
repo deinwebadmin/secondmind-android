@@ -22,7 +22,7 @@ secondmind-android/
 
 ## APK installieren (Sideload)
 
-1. [`secondmind-1.0.14.apk`](https://github.com/deinwebadmin/secondmind-android/releases/download/v1.0.14/secondmind-1.0.14.apk)
+1. [`secondmind-1.0.15.apk`](https://github.com/deinwebadmin/secondmind-android/releases/download/v1.0.15/secondmind-1.0.15.apk)
    aus dem Release herunterladen (oder selbst bauen, siehe unten).
 2. Auf dem Gerät: **Einstellungen → Apps → Installieren unbekannter Apps** → Browser/File-Manager erlauben.
 3. APK antippen und installieren.
@@ -112,6 +112,11 @@ MIT
 - [secondmind-windows](https://github.com/deinwebadmin/secondmind-windows) – dieselbe App für Windows (gleiche Google-Client-ID, gleicher Drive-Ordner)
 
 ## Änderungen
+
+### 1.0.15
+- **Dauer-Wahlrad**: Der Zeit-Button (📅) in der Zeile öffnet ein Dauer-Sheet mit iOS-artigem **Wahlrad** (15 Min bis 4 Std) – so lassen sich **Punkte und Unterpunkte schon vor dem Einplanen mit einer Dauer versehen** (Chip „⏱ 45 Min" in der Zeile, erneutes Tippen öffnet das Rad wieder; „Ohne Dauer" zum Zurücknehmen)
+- **Kalender: Seitenbereiche zum Hineinziehen**: Punkte mit zugewiesener Dauer, aber noch ohne Termin, erscheinen **links und rechts** neben dem Wochenraster – per Fingerzug direkt ins Raster legen (Ziel-Spalte leuchtet auf, Vorschau mit 15-Minuten-Snap, die Dauer bleibt erhalten); Tippen auf den Chip öffnet das Termin-Sheet
+- **Termin-Sheet**: Die Dauer wird ebenfalls per Wahlrad gewählt (statt Segmentschaltern), Datum und Uhrzeit bleiben unverändert
 
 ### 1.0.14
 - **Pfeil-Button „›" in den Punktezeilen entfernt** – das Tippen auf die Zeile öffnet die Punkt-Optionen weiterhin
