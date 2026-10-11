@@ -22,7 +22,7 @@ secondmind-android/
 
 ## APK installieren (Sideload)
 
-1. [`secondmind-1.0.12.apk`](https://github.com/deinwebadmin/secondmind-android/releases/download/v1.0.12/secondmind-1.0.12.apk)
+1. [`secondmind-1.0.13.apk`](https://github.com/deinwebadmin/secondmind-android/releases/download/v1.0.13/secondmind-1.0.13.apk)
    aus dem Release herunterladen (oder selbst bauen, siehe unten).
 2. Auf dem Gerät: **Einstellungen → Apps → Installieren unbekannter Apps** → Browser/File-Manager erlauben.
 3. APK antippen und installieren.
@@ -112,6 +112,9 @@ MIT
 - [secondmind-windows](https://github.com/deinwebadmin/secondmind-windows) – dieselbe App für Windows (gleiche Google-Client-ID, gleicher Drive-Ordner)
 
 ## Änderungen
+
+### 1.0.13
+- Filterleiste: „Chrono" heißt jetzt **„Neuste"**, **„Alle"-Button entfernt**, „Dringend"/„Neuste" als unabhängig zuschaltbare Kipptaster (nochmal drücken = aus, beliebig kombinierbar)
 
 ### 1.0.12
 - **Chrono zeigt die neuesten Karten zuerst** (vorher älteste zuerst)
