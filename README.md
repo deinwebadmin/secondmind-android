@@ -22,7 +22,7 @@ secondmind-android/
 
 ## APK installieren (Sideload)
 
-1. [`secondmind-1.0.10.apk`](https://github.com/deinwebadmin/secondmind-android/releases/download/v1.0.10/secondmind-1.0.10.apk)
+1. [`secondmind-1.0.11.apk`](https://github.com/deinwebadmin/secondmind-android/releases/download/v1.0.11/secondmind-1.0.11.apk)
    aus dem Release herunterladen (oder selbst bauen, siehe unten).
 2. Auf dem Gerät: **Einstellungen → Apps → Installieren unbekannter Apps** → Browser/File-Manager erlauben.
 3. APK antippen und installieren.
@@ -112,6 +112,10 @@ MIT
 - [secondmind-windows](https://github.com/deinwebadmin/secondmind-windows) – dieselbe App für Windows (gleiche Google-Client-ID, gleicher Drive-Ordner)
 
 ## Änderungen
+
+### 1.0.11
+- **Menü aufgeräumt**: „Start" und „Kalender" entfernt (Rückweg über Logo bzw. Kalender-Button in der Topbar)
+- **Filterleiste auf der Startseite**: nach Labels (Tag-Chips mit Farbpunkt), Dringlichkeit (nur Listen mit rot/gelben Punkten, rote zuerst) und Chronologie (nach Erstellungsdatum, älteste zuerst) – plus „Alle" zum Zurücksetzen und Hinweis mit Reset bei 0 Treffern
 
 ### 1.0.10
 - **Kalender: To-Do per Tipp einplanen**: Tipp auf ein leeres Zeitfenster im Wochenraster öffnet den Punktewähler mit Datum/Uhrzeit der Fläche vorausgefüllt (auch zum Verschieben bereits eingeplanter Punkte); der Button „＋ To-Do einplanen" unter dem Raster ist entfallen
