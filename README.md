@@ -22,7 +22,7 @@ secondmind-android/
 
 ## APK installieren (Sideload)
 
-1. [`secondmind-1.0.6.apk`](https://github.com/deinwebadmin/secondmind-android/releases/download/v1.0.6/secondmind-1.0.6.apk)
+1. [`secondmind-1.0.7.apk`](https://github.com/deinwebadmin/secondmind-android/releases/download/v1.0.7/secondmind-1.0.7.apk)
    aus dem Release herunterladen (oder selbst bauen, siehe unten).
 2. Auf dem Gerät: **Einstellungen → Apps → Installieren unbekannter Apps** → Browser/File-Manager erlauben.
 3. APK antippen und installieren.
@@ -112,6 +112,10 @@ MIT
 - [secondmind-windows](https://github.com/deinwebadmin/secondmind-windows) – dieselbe App für Windows (gleiche Google-Client-ID, gleicher Drive-Ordner)
 
 ## Änderungen
+
+### 1.0.7
+- **In-App-Updates**: secondmind prüft alle 30 Minuten (und manuell in den Einstellungen) nach neuen Versionen und fragt „Jetzt aktualisieren oder Später?“. Beim Bestätigen lädt die App die neue APK und öffnet den Android-Installer – ein Tipp auf „Installieren“ genügt (Android verlangt diese Bestätigung bei Sideloading). Einträge, Einstellungen und die Drive-Verknüpfung bleiben vollständig erhalten
+- **Einstellungen synchronisieren**: Theme, Kalender-/Memory-Schalter, OAuth-Client-ID usw. liegen jetzt als eigener Datensatz in der Drive-Datei. Ein zweites Gerät übernimmt nach dem Verbinden automatisch alle Einstellungen des ersten Geräts (Tags und Tag-Farben lieferten ohnehin schon die Listen-/Notiz-Datensätze)
 
 ### 1.0.6
 - **Archiv-Button an jedem Punkt**: Direkt in der Punktzeile (neben Farbe, Kalender und Büroklammer) – verschiebt den Punkt mit einem Tipp ins Memory (bzw. ins Archiv bei Simpel-Listen), inklusive Rückgängig-Toast

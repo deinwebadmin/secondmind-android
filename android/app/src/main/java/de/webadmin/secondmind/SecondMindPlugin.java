@@ -2,21 +2,28 @@ package de.webadmin.secondmind;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.provider.Settings;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 import android.util.Base64;
+import androidx.core.content.FileProvider;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
@@ -258,6 +265,64 @@ public class SecondMindPlugin extends Plugin {
             } catch (Exception ignored) { /* keine Browser-App vorhanden */ }
         }
         call.resolve();
+    }
+
+    /* ---------------- In-App-Update (APK) ---------------- */
+
+    /**
+     * Lädt eine neue APK in den Cache und öffnet den System-Installer.
+     * Android verlangt bei Sideloading die Bestätigung durch den Nutzer –
+     * „Apps aus unbekannten Quellen“ wird pro App erlaubt (einmalig).
+     */
+    @PluginMethod
+    public void installApk(PluginCall call) {
+        String url = call.getString("url");
+        if (url == null || !url.startsWith("https://")) {
+            call.reject("ungültige Download-URL");
+            return;
+        }
+
+        if (!getContext().getPackageManager().canRequestPackageInstalls()) {
+            try {
+                Intent perm = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,
+                    Uri.parse("package:" + getContext().getPackageName()));
+                getActivity().startActivity(perm);
+            } catch (Exception ignored) { /* Einstellungen nicht erreichbar */ }
+            call.reject("permission-required");
+            return;
+        }
+
+        final PluginCall theCall = call;
+        bridge.execute(() -> {
+            try {
+                File out = new File(getContext().getCacheDir(), "secondmind-update.apk");
+                HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
+                con.setConnectTimeout(15000);
+                con.setReadTimeout(120000);
+                con.connect();
+                try (InputStream in = new BufferedInputStream(con.getInputStream());
+                     OutputStream os = new FileOutputStream(out)) {
+                    byte[] buf = new byte[8192];
+                    int n;
+                    while ((n = in.read(buf)) > 0) os.write(buf, 0, n);
+                }
+                con.disconnect();
+
+                Uri uri = FileProvider.getUriForFile(getContext(),
+                    getContext().getPackageName() + ".fileprovider", out);
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setDataAndType(uri, "application/vnd.android.package-archive");
+                i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_TASK);
+                getActivity().startActivity(i);
+
+                JSObject res = new JSObject();
+                res.put("ok", true);
+                res.put("file", out.getAbsolutePath());
+                theCall.resolve(res);
+            } catch (Exception e) {
+                theCall.reject("Download fehlgeschlagen: " + e.getMessage());
+            }
+        });
     }
 
     /* ---------------- Hilfen ---------------- */
