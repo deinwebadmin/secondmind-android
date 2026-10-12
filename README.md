@@ -22,7 +22,7 @@ secondmind-android/
 
 ## APK installieren (Sideload)
 
-1. [`secondmind-1.0.19.apk`](https://github.com/deinwebadmin/secondmind-android/releases/download/v1.0.19/secondmind-1.0.19.apk)
+1. [`secondmind-1.0.20.apk`](https://github.com/deinwebadmin/secondmind-android/releases/download/v1.0.20/secondmind-1.0.20.apk)
    aus dem Release herunterladen (oder selbst bauen, siehe unten).
 2. Auf dem Gerät: **Einstellungen → Apps → Installieren unbekannter Apps** → Browser/File-Manager erlauben.
 3. APK antippen und installieren.
@@ -112,6 +112,13 @@ MIT
 - [secondmind-windows](https://github.com/deinwebadmin/secondmind-windows) – dieselbe App für Windows (gleiche Google-Client-ID, gleicher Drive-Ordner)
 
 ## Änderungen
+
+### 1.0.20
+- **Kalender zum Abhaken**: jeder Eintrag (geplant oder ♻️) hat einen kleinen Kreis – ein Tipp hakt direkt im Kalender ab, erneuter Tipp macht es wieder offen
+- **Wiederholungen mit Zeit & Dauer**: ♻️-Punkte optional mit Uhrzeit und Dauer (neue Felder im Intervall-Sheet) – positioniert im Stundenraster, gemeinsam mit normalen Terminen
+- **Notiz dabei**: steht eine Notiz am wiederkehrenden Punkt, zeigt der Kalendereintrag den Notiztitel (📝) – Tippen öffnet die Notiz
+- **Verschieben mit Rückfrage**: Ziehen einer Wiederholung in einen Zeitslot fragt „Für alle Wiederholungen" oder „Nur für diesen Tag" – Einzeltermine werden als Ausnahme gespeichert
+- **Seitenbereich ↔ Kalender**: normale Punkte lassen sich beidseitig ziehen – vom Seitenbereich ins Raster und zurück (Termin herausgenommen, Dauer bleibt)
 
 ### 1.0.19
 - **Stabile Reihenfolge**: Punkte in der Wiederkehrend-Liste ändern beim Aktivieren/Deaktivieren nie ihre Position – nur on/off
