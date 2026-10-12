@@ -22,7 +22,7 @@ secondmind-android/
 
 ## APK installieren (Sideload)
 
-1. [`secondmind-1.0.17.apk`](https://github.com/deinwebadmin/secondmind-android/releases/download/v1.0.17/secondmind-1.0.17.apk)
+1. [`secondmind-1.0.18.apk`](https://github.com/deinwebadmin/secondmind-android/releases/download/v1.0.18/secondmind-1.0.18.apk)
    aus dem Release herunterladen (oder selbst bauen, siehe unten).
 2. Auf dem Gerät: **Einstellungen → Apps → Installieren unbekannter Apps** → Browser/File-Manager erlauben.
 3. APK antippen und installieren.
@@ -112,6 +112,12 @@ MIT
 - [secondmind-windows](https://github.com/deinwebadmin/secondmind-windows) – dieselbe App für Windows (gleiche Google-Client-ID, gleicher Drive-Ordner)
 
 ## Änderungen
+
+### 1.0.18
+- **Neue Liste „Wiederkehrend“ (♻️)**: wird automatisch angelegt – dort lebst du To-Dos, die sich wiederholen
+- **Täglich / wöchentlich / monatlich** – mit Intervall („alle n Tage/Wochen/Monate“), Wochentagswahl und Monatstag
+- **An- und ausschaltbar**: jeder Punkt hat einen Schalter zum Pausieren (ohne Löschen)
+- **Kalender-Verknüpfung**: wiederkehrende Aufgaben erscheinen als ♻️-Einträge in der Wochenübersicht; Tippen öffnet die Bearbeitung
 
 ### 1.0.17
 - **Optionale Gemini-KI-Integration**: in den Einstellungen an-/abschaltbar, API-Key wird lokal eingetragen (Modell `gemini-2.5-flash`)
