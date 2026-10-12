@@ -22,7 +22,7 @@ secondmind-android/
 
 ## APK installieren (Sideload)
 
-1. [`secondmind-1.0.20.apk`](https://github.com/deinwebadmin/secondmind-android/releases/download/v1.0.20/secondmind-1.0.20.apk)
+1. [`secondmind-1.0.21.apk`](https://github.com/deinwebadmin/secondmind-android/releases/download/v1.0.21/secondmind-1.0.21.apk)
    aus dem Release herunterladen (oder selbst bauen, siehe unten).
 2. Auf dem Gerät: **Einstellungen → Apps → Installieren unbekannter Apps** → Browser/File-Manager erlauben.
 3. APK antippen und installieren.
@@ -112,6 +112,10 @@ MIT
 - [secondmind-windows](https://github.com/deinwebadmin/secondmind-windows) – dieselbe App für Windows (gleiche Google-Client-ID, gleicher Drive-Ordner)
 
 ## Änderungen
+
+### 1.0.21
+- **Freigabe-Button immer sichtbar**: Der Gemini-Sparkle-Button neben dem Pin erscheint jetzt auf jeder Listen- und Notizkarte (Modus „Nur exponierte") – auch wenn die KI noch nicht eingerichtet ist; grau = nicht freigegeben, farbig = freigegeben
+- **Topbar-Button korrekt ausblenden**: Bei deaktiviertem Gemini verschwindet der Chat-Button oben rechts jetzt zuverlässig
 
 ### 1.0.20
 - **Kalender zum Abhaken**: jeder Eintrag (geplant oder ♻️) hat einen kleinen Kreis – ein Tipp hakt direkt im Kalender ab, erneuter Tipp macht es wieder offen
