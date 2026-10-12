@@ -22,7 +22,7 @@ secondmind-android/
 
 ## APK installieren (Sideload)
 
-1. [`secondmind-1.0.18.apk`](https://github.com/deinwebadmin/secondmind-android/releases/download/v1.0.18/secondmind-1.0.18.apk)
+1. [`secondmind-1.0.19.apk`](https://github.com/deinwebadmin/secondmind-android/releases/download/v1.0.19/secondmind-1.0.19.apk)
    aus dem Release herunterladen (oder selbst bauen, siehe unten).
 2. Auf dem Gerät: **Einstellungen → Apps → Installieren unbekannter Apps** → Browser/File-Manager erlauben.
 3. APK antippen und installieren.
@@ -112,6 +112,12 @@ MIT
 - [secondmind-windows](https://github.com/deinwebadmin/secondmind-windows) – dieselbe App für Windows (gleiche Google-Client-ID, gleicher Drive-Ordner)
 
 ## Änderungen
+
+### 1.0.19
+- **Stabile Reihenfolge**: Punkte in der Wiederkehrend-Liste ändern beim Aktivieren/Deaktivieren nie ihre Position – nur on/off
+- **Alles über Buttons in der Zeile**: Farbwahl (🎨, Farbe wird in den Kalender übernommen), Intervall (♻️), An/Aus-Schalter – kein Menü mehr beim Anklicken, Text direkt editierbar
+- **Wischen wie gewohnt**: nach rechts löschen (mit Rückfrage), nach links pausieren/aktivieren
+- **„Repetitiv" als neue Vorlage** beim Plus-Button
 
 ### 1.0.18
 - **Neue Liste „Wiederkehrend“ (♻️)**: wird automatisch angelegt – dort lebst du To-Dos, die sich wiederholen
