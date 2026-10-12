@@ -22,7 +22,7 @@ secondmind-android/
 
 ## APK installieren (Sideload)
 
-1. [`secondmind-1.0.16.apk`](https://github.com/deinwebadmin/secondmind-android/releases/download/v1.0.16/secondmind-1.0.16.apk)
+1. [`secondmind-1.0.17.apk`](https://github.com/deinwebadmin/secondmind-android/releases/download/v1.0.17/secondmind-1.0.17.apk)
    aus dem Release herunterladen (oder selbst bauen, siehe unten).
 2. Auf dem Gerät: **Einstellungen → Apps → Installieren unbekannter Apps** → Browser/File-Manager erlauben.
 3. APK antippen und installieren.
@@ -112,6 +112,11 @@ MIT
 - [secondmind-windows](https://github.com/deinwebadmin/secondmind-windows) – dieselbe App für Windows (gleiche Google-Client-ID, gleicher Drive-Ordner)
 
 ## Änderungen
+
+### 1.0.17
+- **Optionale Gemini-KI-Integration**: in den Einstellungen an-/abschaltbar, API-Key wird lokal eingetragen (Modell `gemini-2.5-flash`)
+- **Zugriffskontrolle**: Standard „Nur exponierte" – pro Karte (Liste/Notiz) ein Gemini-Sparkle-Button **neben dem Pin**, der diese Karte für die KI freigibt; alternativ „Alle Einträge" auf ausdrückliche Wahl
+- **Gemini-Chat**: Sparkle-Button in der Topbar (sichtbar, sobald eingerichtet) sowie in den Einstellungen – Anfragen enthalten ausschließlich die freigegebenen Inhalte
 
 ### 1.0.16
 - **Anpinnen**: Der Pin-Button zeigt immer das 📌-Icon – **grau solange nicht angepinnt, farbig wenn aktiv** (gilt für die Karten auf der Startseite sowie die Pins im Listen- und Notiz-Detail; 📍 ist verschwunden)
