@@ -293,12 +293,13 @@ public class SecondMindPlugin extends Plugin {
         }
 
         final PluginCall theCall = call;
-        bridge.execute(() -> {
+        new Thread(() -> {
             try {
                 File out = new File(getContext().getCacheDir(), "secondmind-update.apk");
                 HttpURLConnection con = (HttpURLConnection) new URL(url).openConnection();
                 con.setConnectTimeout(15000);
                 con.setReadTimeout(120000);
+                con.setRequestProperty("User-Agent", "secondmind-updater");
                 con.connect();
                 try (InputStream in = new BufferedInputStream(con.getInputStream());
                      OutputStream os = new FileOutputStream(out)) {
@@ -307,6 +308,9 @@ public class SecondMindPlugin extends Plugin {
                     while ((n = in.read(buf)) > 0) os.write(buf, 0, n);
                 }
                 con.disconnect();
+                if (out.length() < 1_000_000) {
+                    throw new Exception("Datei unvollständig (" + out.length() + " Bytes)");
+                }
 
                 Uri uri = FileProvider.getUriForFile(getContext(),
                     getContext().getPackageName() + ".fileprovider", out);
@@ -318,11 +322,24 @@ public class SecondMindPlugin extends Plugin {
                 JSObject res = new JSObject();
                 res.put("ok", true);
                 res.put("file", out.getAbsolutePath());
-                theCall.resolve(res);
+                getActivity().runOnUiThread(() -> theCall.resolve(res));
             } catch (Exception e) {
-                theCall.reject("Download fehlgeschlagen: " + e.getMessage());
+                // Fallback: Download-URL im Browser öffnen – Chrome lädt die APK,
+                // der Nutzer installiert sie aus den Benachrichtigungen/Downloads.
+                try {
+                    Intent b = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                    b.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    getContext().startActivity(b);
+                    JSObject res = new JSObject();
+                    res.put("ok", true);
+                    res.put("fallback", "browser");
+                    getActivity().runOnUiThread(() -> theCall.resolve(res));
+                } catch (Exception e2) {
+                    final String msg = e.getMessage();
+                    getActivity().runOnUiThread(() -> theCall.reject("Download fehlgeschlagen: " + msg));
+                }
             }
-        });
+        }, "secondmind-update").start();
     }
 
     /* ---------------- Hilfen ---------------- */
