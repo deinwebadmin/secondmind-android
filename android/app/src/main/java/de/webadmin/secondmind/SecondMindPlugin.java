@@ -1,17 +1,27 @@
 package de.webadmin.secondmind;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.provider.Settings;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 import android.util.Base64;
+import androidx.activity.result.ActivityResult;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
+import com.getcapacitor.annotation.ActivityCallback;
 import com.getcapacitor.annotation.CapacitorPlugin;
+import com.getcapacitor.annotation.Permission;
+import com.getcapacitor.annotation.PermissionCallback;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -27,12 +37,15 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.GCMParameterSpec;
+import org.json.JSONException;
 
 /**
  * secondmind – native Schnittstelle für Android.
@@ -42,11 +55,19 @@ import javax.crypto.spec.GCMParameterSpec;
  *    Auth-Code wird zurück an die Web-App gegeben.
  * 2) encrypt/decrypt: Tokenschlüssel im Android-Keystore (AES-256-GCM).
  * 3) openExternal: Links in der Standard-Browser-App öffnen.
+ * 4) scanQr: Kamera-Scan für die Schlüsselübergabe (ZXing, offline).
+ * 5) pairSend: Schlüsselübergabe über das WLAN – die WebView lädt die App von
+ *    https://localhost und darf dort keinen http-Anfrage nachgehen (Mixed Content),
+ *    deshalb läuft dieses Senden nativ.
  */
-@CapacitorPlugin(name = "SecondMind")
+@CapacitorPlugin(
+    name = "SecondMind",
+    permissions = @Permission(alias = "camera", strings = { Manifest.permission.CAMERA })
+)
 public class SecondMindPlugin extends Plugin {
 
     private static final String KEY_ALIAS = "secondmind-secret";
+    private static final int PAIR_TIMEOUT_MS = 2000;      // je Zieladresse (D.5 Stufe 3)
     private static final String HTML_OK =
         "<!doctype html><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">"
         + "<body style=\"font-family:system-ui,sans-serif;display:grid;place-items:center;height:100vh;margin:0;background:#f2f2f7;color:#111\">"
@@ -340,6 +361,123 @@ public class SecondMindPlugin extends Plugin {
                 }
             }
         }, "secondmind-update").start();
+    }
+
+    /* ---------------- QR-Scan (Schlüssel-Pairing, D.5) ---------------- */
+
+    /**
+     * Scannet einen QR-Code mit der Kamera und liefert dessen Text zurück.
+     * Die Kamera läuft offline in der ZXing-Erfassungs-Activity; nichts wird
+     * hochgeladen. Ohne Kamera-Recht wird es zuerst angefragt, danach scannt
+     * die App weiter (Webcam-Fallback in pairing.js greift nur, wenn die
+     * native Kamera nicht startbar ist).
+     */
+    @PluginMethod
+    public void scanQr(PluginCall call) {
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermissionForAlias("camera", call, "scanQrPermission");
+            return;
+        }
+        launchQrScanner(call);
+    }
+
+    @PermissionCallback
+    private void scanQrPermission(PluginCall call) {
+        // Recht wurde gewährt (sonst wäre der Call bereits abgelehnt worden)
+        launchQrScanner(call);
+    }
+
+    private void launchQrScanner(PluginCall call) {
+        try {
+            IntentIntegrator integrator = new IntentIntegrator(getActivity());
+            integrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE);
+            integrator.setPrompt("QR-Code in den Rahmen halten");
+            integrator.setBeepEnabled(false);
+            integrator.setBarcodeImageEnabled(false);
+            integrator.setOrientationLocked(true);
+            startActivityForResult(call, integrator.createScanIntent(), "scanQrResult");
+        } catch (Exception e) {
+            call.reject("Kamera konnte nicht gestartet werden: " + e.getMessage());
+        }
+    }
+
+    @ActivityCallback
+    private void scanQrResult(PluginCall call, ActivityResult result) {
+        IntentResult parsed = IntentIntegrator.parseActivityResult(result.getResultCode(), result.getData());
+        if (parsed != null && parsed.getContents() != null) {
+            JSObject res = new JSObject();
+            res.put("value", parsed.getContents());
+            call.resolve(res);
+        } else {
+            call.reject("abgebrochen");
+        }
+    }
+
+    /* ---------------- Pairing über das WLAN (D.5 Stufe 3) ---------------- */
+
+    /**
+     * Schickt den verschlüsselten Schlüssel an das andere Gerät.
+     * Alle IPv4-Kandidaten aus dem QR-Code werden der Reihe nach versucht,
+     * je mit 2 s Verbindungs- und Antwort-Timeout. Der Körper ist nur
+     * Chiffretext – das Session-Secret steht ausschließlich im QR-Code.
+     */
+    @PluginMethod
+    public void pairSend(PluginCall call) {
+        JSArray ips = call.getArray("ips");
+        int port = call.getInt("port", 0);
+        String body = call.getString("body");
+
+        final List<String> ziele = new ArrayList<>();
+        if (ips != null) {
+            for (int i = 0; i < ips.length(); i++) {
+                try {
+                    String ip = ips.getString(i);
+                    if (ip != null && ip.matches("\\d{1,3}(\\.\\d{1,3}){3}")) ziele.add(ip);
+                } catch (JSONException ignored) {
+                    // unbrauchbarer Eintrag wird übersprungen
+                }
+            }
+        }
+        if (ziele.isEmpty() || port <= 0 || body == null || body.isEmpty()) {
+            call.reject("keine Zieladresse im QR-Code");
+            return;
+        }
+
+        final PluginCall theCall = call;
+        final byte[] bytes = body.getBytes(StandardCharsets.UTF_8);
+
+        new Thread(() -> {
+            for (String ip : ziele) {
+                HttpURLConnection con = null;
+                try {
+                    URL url = new URL("http://" + ip + ":" + port + "/");
+                    con = (HttpURLConnection) url.openConnection();
+                    con.setConnectTimeout(PAIR_TIMEOUT_MS);
+                    con.setReadTimeout(PAIR_TIMEOUT_MS);
+                    con.setRequestMethod("POST");
+                    con.setDoOutput(true);
+                    con.setRequestProperty("Content-Type", "text/plain; charset=utf-8");
+                    con.setFixedLengthStreamingMode(bytes.length);
+                    try (OutputStream os = con.getOutputStream()) { os.write(bytes); }
+                    int code = con.getResponseCode();
+                    if (code >= 200 && code < 300) {
+                        JSObject ok = new JSObject();
+                        ok.put("ok", true);
+                        getActivity().runOnUiThread(() -> theCall.resolve(ok));
+                        return;
+                    }
+                } catch (Exception ignored) {
+                    // nächster Kandidat
+                } finally {
+                    if (con != null) con.disconnect();
+                }
+            }
+            JSObject fehler = new JSObject();
+            fehler.put("ok", false);
+            fehler.put("error", "nicht_erreichbar");
+            getActivity().runOnUiThread(() -> theCall.resolve(fehler));
+        }, "secondmind-pair").start();
     }
 
     /* ---------------- Hilfen ---------------- */

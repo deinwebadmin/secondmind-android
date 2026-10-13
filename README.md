@@ -42,8 +42,22 @@ secondmind-android/
 5. Client-ID in secondmind eintragen: **Einstellungen → Google Drive → OAuth Client-ID**.
 6. **„Mit Google verknüpfen“** → System-Browser öffnet sich → Anmeldung → App übernimmt den Code automatisch.
 
-**Wichtig:** Im Status **„Testing“** läuft das Refresh-Token nach 7 Tagen ab. Für dauerhaftes
-Anmelden den Bildschirm **„In Veröffentlichung bringen“**.
+**Wichtig – einmal „In Veröffentlichung bringen“ (dauerhaftes Anmelden):** Solange der
+OAuth-Client im Status **„Testing“** steht, läuft das Refresh-Token nach 7 Tagen ab und du
+musst erneut verknüpfen. Deshalb:
+
+1. **APIs & Dienste → OAuth-Bestätigungs-Bildschirm** öffnen.
+2. Ganz unten **„In Veröffentlichung bringen“** („Publish app“) klicken.
+3. Google warnt, dass die App nicht geprüft wurde – **„Zurück zur Google Cloud Console“**
+   („Continue“) wählen. Die App nutzt ausschließlich dein eigenes Konto; für den
+   Privatgebrauch ist das völlig ausreichend.
+4. Danach bleibt die Anmeldung dauerhaft gültig. Erneutes Verknüpfen ist nur nötig, wenn du
+   die Verbindung selbst trennst.
+
+**Die Client-ID niemals austauschen:** Google gibt ein Refresh-Token nur an genau die
+Client-ID weiter, mit der es ausgestellt wurde. Tragst du eine andere ID ein, ist die
+Anmeldung weg – obwohl die Daten im Drive-Ordner „secondmind“ weiterhin da sind. Verwende
+deshalb auf **allen** Geräten (Windows und Android) dieselbe Client-ID.
 
 Der Flow funktioniert über einen lokalen Loopback-Server (`http://127.0.0.1:PORT`) in der App –
 deshalb reicht eine einzige Desktop-Client-ID für Windows *und* Android, ohne SHA-1-Registrierung.
@@ -120,6 +134,8 @@ cd android
 | `openAuth({url})` | Startet einen lokalen Server auf `127.0.0.1`, setzt die passende `redirect_uri` in der Google-Auth-URL, öffnet den System-Browser und löst mit `{code, redirectUri}` auf, sobald Google zurückleitet. |
 | `encrypt({value})` / `decrypt({value})` | Schlüssel im **Android-Keystore** (AES-256-GCM) – OAuth-Tokens werden nie im Klartext gespeichert. |
 | `openExternal({url})` | Links in der Standard-Browser-App öffnen. |
+| `scanQr({timeoutMs})` | Öffnet die Kamera (ZXing, vollständig offline) und löst mit dem gescannten Text auf – für die Schlüsselübergabe. Fordert `CAMERA` zur Laufzeit an; ohne Recht meldet sich die Web-App mit der Webcam (Desktop-Fallback). |
+| `pairSend({ips, port, body})` | Schickt den verschlüsselten Schlüssel über das WLAN an das andere Gerät. Nativ, weil die WebView die App von `https://localhost` lädt und dort keinen `http://`-Anfragen nachgehen darf (Mixed Content). Alle Adressen aus dem QR-Code werden mit 2 s Timeout versucht. |
 
 ## Synverhalten
 
@@ -144,6 +160,13 @@ Export/Import.
 
 ## Sicherheit
 
+- **Ende-zu-Ende-Verschlüsselung**: Jeder Datensatz wird auf dem Gerät mit einem
+  256-Bit-Hauptschlüssel (AES-256-GCM) verschlüsselt; in Google Drive liegt ausschließlich
+  Chiffretext. Der Hauptschlüssel wird lokal aus dem Android-Keystore abgeleitet und
+  verlässt das Gerät nur, wenn du ihn explizit über QR-Code, Netzwerk oder `.smkey`-Datei
+  an ein zweites Gerät gibst – niemals über Google.
+- Ohne Sicherung des Schlüssels (siehe „Schlüssel & Geräte“) sind die Daten bei einem
+  Geräteverlust endgültig weg; secondmind hat keine Kopie und kann sie nicht wiederherstellen.
 - OAuth-Tokens verschlüsselt im **Android-Keystore** (AES-256-GCM, Hardware-gebunden).
 - Standard-Scope `drive.file` – die App sieht nur Dateien, die sie selbst angelegt hat
   (Ordner `secondmind` in deinem Drive).
@@ -158,6 +181,16 @@ MIT
 - [secondmind-windows](https://github.com/deinwebadmin/secondmind-windows) – dieselbe App für Windows (gleiche Google-Client-ID, gleicher Drive-Ordner)
 
 ## Änderungen
+
+### 1.0.25
+- **Ersteinrichtung mit Onboarding**: Nach der Installation fragt secondmind, ob du dich mit Google anmelden willst oder **nur lokal** nutzt – ohne Anmeldung bleibt alles auf dem Gerät, der Drive-Sync lässt sich jederzeit nachholen
+- **Identität sichtbar**: In den Einstellungen siehst du Avatar, Name und E-Mail deines verbundenen Kontos; ein Kontowechsel verworft alte Drive-Daten, statt sie mit deinen zu vermischen
+- **Abgelaufene Verbindung erkannt**: Ist die Google-Anmeldung abgelaufen, erscheint ein Banner „Verbindung abgelaufen – erneut verknüpfen“ mit einem einzigen Tipp; zuvor wird eine stille Wiederanmeldung versucht – deine Daten bleiben dabei immer erhalten
+- **Ende-zu-Ende-Verschlüsselung**: Notizen, To-Dos, Einstellungen und Anhänge werden auf dem Gerät mit einem 256-Bit-Schlüssel (AES-256-GCM, PBKDF2 mit 310.000 Runden) verschlüsselt; in Google Drive liegt ausschließlich Chiffretext
+- **Schlüssel in vier Schritten übergeben**: Direkt-QR-Code, Kamera-Scan, Netzwerk-Übergabe mit 6-stelligem Sicherheitscode oder .smkey-Datei – der Schlüssel verlässt das Gerät nur über diese Wege und **nie über Google** (Android: Kamera-Scan und Netzwerk-Senden laufen nativ über das Plugin)
+- **Sicherungspflicht für den Schlüssel**: Eine eigene Seite mahnt, den Schlüssel auf einem zweiten Gerät oder Stick zu sichern, mit Warnhinweis bis es erledigt ist
+- **Export im Klartext**: Der Export enthält alle Inhalte unverschlüsselt (inklusive Gemini-API-Key), aber **niemals** Anmelde-Token, Geräteschlüssel oder Passwörter; der Import stellt alles 1:1 wieder her, auch offline
+- **Ehrliches Schutzziel**: Die Einstellungen erklären, was der Schlüssel schützt (Inhalte auf dem Gerät und in Drive) und was nicht (Zugriff auf dein Benutzerkonto)
 
 ### 1.0.24
 - **Modell-Dropdown richtig gefärbt**: Das Auswahlfeld für das KI-Modell ist jetzt wie alle anderen Eingabefelder gefüllt dargestellt – Android zeigte vorher das native, ungefüllte Widget; jetzt mit eigenem Pfeil und angepasster Auswahlliste

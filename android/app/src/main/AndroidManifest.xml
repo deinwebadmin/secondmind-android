@@ -40,4 +40,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- In-App-Update: APK laden und System-Installer öffnen -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <!-- Schlüssel-Pairing: QR-Code mit der Kamera scannen (nur lokal, kein Upload) -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <!-- Kamera ist optional: ohne sie hilft die .smkey-Datei beim Gerätewechsel -->
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
 </manifest>
