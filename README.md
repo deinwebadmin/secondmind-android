@@ -22,7 +22,7 @@ secondmind-android/
 
 ## APK installieren (Sideload)
 
-1. [`secondmind-1.0.23.apk`](https://github.com/deinwebadmin/secondmind-android/releases/download/v1.0.23/secondmind-1.0.23.apk)
+1. [`secondmind-1.0.24.apk`](https://github.com/deinwebadmin/secondmind-android/releases/download/v1.0.24/secondmind-1.0.24.apk)
    aus dem Release herunterladen (oder selbst bauen, siehe unten).
 2. Auf dem Gerät: **Einstellungen → Apps → Installieren unbekannter Apps** → Browser/File-Manager erlauben.
 3. APK antippen und installieren.
@@ -158,6 +158,9 @@ MIT
 - [secondmind-windows](https://github.com/deinwebadmin/secondmind-windows) – dieselbe App für Windows (gleiche Google-Client-ID, gleicher Drive-Ordner)
 
 ## Änderungen
+
+### 1.0.24
+- **Modell-Dropdown richtig gefärbt**: Das Auswahlfeld für das KI-Modell ist jetzt wie alle anderen Eingabefelder gefüllt dargestellt – Android zeigte vorher das native, ungefüllte Widget; jetzt mit eigenem Pfeil und angepasster Auswahlliste
 
 ### 1.0.23
 - **KI-Modell frei wählbar**: Neues Dropdown in den Einstellungen mit den aktuellen Gemini-Modellen – Standard ist **Gemini 3.8 Flash** (u. a. 3.7/3.6/3.5 Flash, Lite-Varianten, Pro-Vorschau); das veraltete `gemini-2.5-flash` entfällt ersatzlos
