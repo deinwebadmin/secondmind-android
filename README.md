@@ -22,7 +22,7 @@ secondmind-android/
 
 ## APK installieren (Sideload)
 
-1. [`secondmind-1.0.22.apk`](https://github.com/deinwebadmin/secondmind-android/releases/download/v1.0.22/secondmind-1.0.22.apk)
+1. [`secondmind-1.0.23.apk`](https://github.com/deinwebadmin/secondmind-android/releases/download/v1.0.23/secondmind-1.0.23.apk)
    aus dem Release herunterladen (oder selbst bauen, siehe unten).
 2. Auf dem Gerät: **Einstellungen → Apps → Installieren unbekannter Apps** → Browser/File-Manager erlauben.
 3. APK antippen und installieren.
@@ -53,9 +53,10 @@ die angezeigte `http://127.0.0.1:…`-Adresse manuell einfügen kannst.
 ## Gemini-KI einrichten (optional)
 
 secondmind kann eine optionale KI begleiten lassen: Nach deinen To-Dos fragen, eine Notiz
-zusammenfassen oder Vorschläge formulieren – angetrieben von Googles Modell
-**`gemini-2.5-flash`**. Die Funktion ist standardmäßig **aus** und lässt sich jederzeit
-wieder abschalten.
+zusammenfassen oder Vorschläge formulieren – angetrieben von Googles Gemini-Modellen.
+Welches Modell läuft, wählst du selbst: in den Einstellungen gibt es ein **Dropdown** mit
+den aktuellen Varianten (Standard: **`gemini-3.8-flash`**). Die Funktion ist standardmäßig
+**aus** und lässt sich jederzeit wieder abschalten.
 
 ### 1. API-Key besorgen (kostenlos)
 
@@ -72,7 +73,9 @@ wieder abschalten.
 1. **Einstellungen → „Gemini KI (optional)“** → **Gemini-Integration aktivieren**.
 2. Den Schlüssel ins Feld **API-Key** einfügen – er wird sofort gespeichert (das Feld
    maskiert die Eingabe). Der Key bleibt auf deinen Geräten und wird mit deinen
-   Einstellungen über Google Drive auch auf dein zweites Gerät übernommen.
+   Einstellungen über Google Drive auch auf dein zweites Gerät übernommen. Unter
+   **Modell** wählst du danach das gewünschte Gemini-Modell (Dropdown, Standard:
+   Gemini 3.8 Flash).
 3. **Zugriff auf deine Inhalte** wählen:
    - **Nur exponierte** *(Standard)*: Die KI sieht ausschließlich Karten, die du freigibst –
      pro Karte (Liste/Notiz) sitzt neben dem Pin ein **Gemini-Sparkle-Button**:
@@ -155,6 +158,12 @@ MIT
 - [secondmind-windows](https://github.com/deinwebadmin/secondmind-windows) – dieselbe App für Windows (gleiche Google-Client-ID, gleicher Drive-Ordner)
 
 ## Änderungen
+
+### 1.0.23
+- **KI-Modell frei wählbar**: Neues Dropdown in den Einstellungen mit den aktuellen Gemini-Modellen – Standard ist **Gemini 3.8 Flash** (u. a. 3.7/3.6/3.5 Flash, Lite-Varianten, Pro-Vorschau); das veraltete `gemini-2.5-flash` entfällt ersatzlos
+- **Inaktive Buttons deutlicher**: Alle inaktiven Button-Icons in den Punktzeilen (Abhaken, Verschiebe-Griff, Farbe, Kalender, Büroklammer, Archiv, Wiederherstellen) sind jetzt Orange wie das Tag-Icon
+- **Kontrast zum Hintergrund**: Auf farbigen Karten weicht das Icon automatisch auf einen Ton mit hohem Kontrast zum Hintergrund aus (mind. ~3:1), wenn Orange der Hintergrundfarbe zu ähnlich wäre
+- **Verständlicher Fehler beim Modellwechsel**: Lässt sich ein gewähltes Modell bei Google nicht abrufen, rät secondmind, in den Einstellungen ein anderes auszuwählen
 
 ### 1.0.22
 - **In-App-Update funktioniert jetzt wirklich**: Der APK-Download läuft im Hintergrund (App bleibt bedienbar), der System-Installer wird sauber geöffnet – **scheitert er, öffnet automatisch der Browser mit der APK** (aus Benachrichtigungen/Downloads installieren)
