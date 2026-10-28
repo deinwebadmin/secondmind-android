@@ -1,0 +1,62 @@
+name: Release
+
+# Läuft nur, wenn du selbst einen Tag v* pushst (nicht bei Pull Requests).
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Version prüfen (Tag == APP_VERSION == versionName)
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          APP=$(grep -oP "APP_VERSION = '\K[^']+" app/js/util.js)
+          GRADLE=$(grep -oP 'versionName "\K[^"]+' android/app/build.gradle)
+          echo "tag=$TAG app=$APP gradle=$GRADLE"
+          [ "$TAG" = "$APP" ] && [ "$TAG" = "$GRADLE" ] || { echo "::error::Versionen stimmen nicht überein"; exit 1; }
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - run: npm ci
+      - run: npx cap sync android
+
+      - name: Keystore aus Secret wiederherstellen
+        env:
+          KEYSTORE_B64: ${{ secrets.SM_KEYSTORE_B64 }}
+        run: |
+          echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/secondmind.keystore"
+          echo "SM_KEYSTORE=$RUNNER_TEMP/secondmind.keystore" >> "$GITHUB_ENV"
+
+      - name: APK bauen
+        working-directory: android
+        env:
+          SM_STORE_PASSWORD: ${{ secrets.SM_STORE_PASSWORD }}
+          SM_KEY_ALIAS: ${{ secrets.SM_KEY_ALIAS }}
+          SM_KEY_PASSWORD: ${{ secrets.SM_KEY_PASSWORD }}
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleRelease --no-daemon
+
+      - name: Umbenennen
+        run: cp android/app/build/outputs/apk/release/app-release.apk "secondmind-${GITHUB_REF_NAME#v}.apk"
+
+      - name: Release veröffentlichen
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" "secondmind-${GITHUB_REF_NAME#v}.apk" \
+            --title "secondmind $GITHUB_REF_NAME" --generate-notes

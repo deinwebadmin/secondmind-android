@@ -22,7 +22,7 @@ secondmind-android/
 
 ## APK installieren (Sideload)
 
-1. [`secondmind-1.0.26.apk`](https://github.com/deinwebadmin/secondmind-android/releases/download/v1.0.26/secondmind-1.0.26.apk)
+1. [`secondmind-1.0.27.apk`](https://github.com/deinwebadmin/secondmind-android/releases/download/v1.0.27/secondmind-1.0.27.apk)
    aus dem Release herunterladen (oder selbst bauen, siehe unten).
 2. Auf dem Gerät: **Einstellungen → Apps → Installieren unbekannter Apps** → Browser/File-Manager erlauben.
 3. APK antippen und installieren.
@@ -211,6 +211,11 @@ MIT
 - [secondmind-windows](https://github.com/deinwebadmin/secondmind-windows) – dieselbe App für Windows (gleiche Google-Client-ID, gleicher Drive-Ordner)
 
 ## Änderungen
+
+### 1.0.27
+
+- **Neuer Signaturschlüssel**: Die APK ist jetzt mit einem neuen, nicht öffentlichen Schlüssel signiert (der alte lag versehentlich im Repo). Einmalig nötig: alte App deinstallieren und v1.0.27 neu installieren – danach laufen In-App-Updates wie gewohnt. E2E-Schlüssel vorher sichern (Export/Pairing), die Daten kommen aus Google Drive zurück.
+- Releases werden per GitHub Actions gebaut (Tag `v*`)
 
 ### 1.0.26
 - **Anmeldung läuft nicht mehr direkt in die Schlüssel-Seite**: Wurde „Mit Google anmelden" gedrückt, ohne dass eine Client-ID hinterlegt war, sprang die App trotz des Fehlers weiter zur Seite „Schlüssel & Geräte" – als wäre alles gelungen. Jetzt bleibst du auf der Begrüßungsseite und siehst, was zu tun ist
