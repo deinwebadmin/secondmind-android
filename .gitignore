@@ -5,3 +5,8 @@ out/
 .DS_Store
 .vscode/
 .idea/
+
+# Signaturschlüssel nie einchecken
+*.keystore
+*.jks
+keystore.properties

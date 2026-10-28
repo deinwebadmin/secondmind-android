@@ -15,22 +15,52 @@ secondmind-android/
 │   ├── app/src/main/java/de/webadmin/secondmind/
 │   │   ├── MainActivity.java     registriert das Plugin
 │   │   └── SecondMindPlugin.java Loopback-OAuth + Keystore-Verschlüsselung
-│   ├── keystore/secondmind.keystore   Signaturschlüssel für Updates
-│   └── app/build.gradle          signingConfig (Passwort: secondmind)
+│   ├── keystore.properties.example    Vorlage für die lokale Signatur-Konfiguration
+│   └── app/build.gradle          signingConfig (liest keystore.properties / Umgebung)
 └── capacitor.config.json
 ```
 
 ## APK installieren (Sideload)
 
-1. [`secondmind-1.0.24.apk`](https://github.com/deinwebadmin/secondmind-android/releases/download/v1.0.24/secondmind-1.0.24.apk)
+1. [`secondmind-1.0.26.apk`](https://github.com/deinwebadmin/secondmind-android/releases/download/v1.0.26/secondmind-1.0.26.apk)
    aus dem Release herunterladen (oder selbst bauen, siehe unten).
 2. Auf dem Gerät: **Einstellungen → Apps → Installieren unbekannter Apps** → Browser/File-Manager erlauben.
 3. APK antippen und installieren.
 4. App starten → Google Drive verknüpfen (siehe unten).
 
-> **Keystore beachten:** App-Updates müssen mit demselben Schlüssel signiert sein
-> (`android/keystore/secondmind.keystore`, Alias `secondmind`, Passwort `secondmind`).
-> Keystore-Datei und Passwort deshalb sicher aufbewahren.
+> **Signaturschlüssel beachten:** App-Updates müssen mit demselben Schlüssel signiert sein,
+> sonst lehnt Android sie ab. Der Schlüssel liegt bewusst **nicht** in diesem Repo – siehe
+> [Signaturschlüssel erzeugen](#signaturschlüssel-erzeugen). Keystore-Datei und Passwort
+> unbedingt sichern (Passwortmanager + Backup); geht der Schlüssel verloren, ist wieder eine
+> Neuinstallation nötig.
+
+## Signaturschlüssel erzeugen
+
+Einmalig, **außerhalb** des Repos (JDK mit `keytool` nötig):
+
+```powershell
+keytool -genkeypair -v -keystore $HOME\.secondmind\secondmind.keystore -alias secondmind `
+  -keyalg RSA -keysize 4096 -validity 36500
+copy android\keystore.properties.example android\keystore.properties   # Pfad + Passwörter eintragen
+```
+
+`android/keystore.properties` ist gitignored. Alternativ die Umgebungsvariablen
+`SM_KEYSTORE`, `SM_STORE_PASSWORD`, `SM_KEY_ALIAS`, `SM_KEY_PASSWORD` setzen (z. B. in CI).
+Alle künftigen Releases müssen mit **diesem** Schlüssel gebaut werden, dann funktioniert das
+In-App-Update weiter.
+
+## Entwicklung: gemeinsamer `app/`-Ordner
+
+Die Web-App in `app/` ist in `secondmind-windows` und `secondmind-android` identisch
+(ausgenommen `app/js/cap/`, nur Android). **Änderungen in `secondmind-windows` machen** und von dort hierher spiegeln
+(`node scripts/sync-app.mjs ../secondmind-android` im Windows-Repo):
+
+```
+node scripts/sync-app.mjs ../secondmind-windows --check   # Abweichungen prüfen
+```
+
+Beim Release `APP_VERSION` (`app/js/util.js`), `package.json` und – für Android –
+`versionCode`/`versionName` in `android/app/build.gradle` gemeinsam hochzählen.
 
 ## Google Drive einrichten (einmalig)
 

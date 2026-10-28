@@ -1,6 +1,6 @@
 {
   "name": "secondmind-android",
-  "version": "1.0.0",
+  "version": "1.0.26",
   "description": "secondmind – Notizen und To-Dos mit Google-Drive-Synchronisation (Android)",
   "private": true,
   "license": "MIT",

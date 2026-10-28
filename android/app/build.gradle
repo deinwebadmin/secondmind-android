@@ -18,11 +18,20 @@ android {
     }
     signingConfigs {
         release {
-            // Eigenes Keystore zum Sideloaden (Passwort: secondmind)
-            storeFile file("../keystore/secondmind.keystore")
-            storePassword "secondmind"
-            keyAlias "secondmind"
-            keyPassword "secondmind"
+            // Signaturschlüssel liegt NICHT im Repo. Pfad + Passwörter kommen aus
+            // android/keystore.properties (gitignored) oder aus Umgebungsvariablen
+            // SM_KEYSTORE, SM_STORE_PASSWORD, SM_KEY_ALIAS, SM_KEY_PASSWORD.
+            def props = new Properties()
+            def pf = rootProject.file("keystore.properties")
+            if (pf.exists()) pf.withInputStream { props.load(it) }
+            def cfg = { String k, String env -> props.getProperty(k) ?: System.getenv(env) }
+            def path = cfg("storeFile", "SM_KEYSTORE")
+            if (path) {
+                storeFile file(path)
+                storePassword cfg("storePassword", "SM_STORE_PASSWORD")
+                keyAlias cfg("keyAlias", "SM_KEY_ALIAS") ?: "secondmind"
+                keyPassword cfg("keyPassword", "SM_KEY_PASSWORD")
+            }
         }
     }
     buildTypes {
